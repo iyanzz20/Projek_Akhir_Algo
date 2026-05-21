@@ -1,360 +1,362 @@
 #include <iostream>
-#include <cstring> //strcpy,strcmp,stricmp
-#include <cstdlib> //system("color 0B") warna biru,system("pause"),system("cls")
-#include <windows.h> //
+//#include <string>
+#include <cstdlib>
+#include <windows.h>
 
 using namespace std;
 
-struct Film {
-    char judul[100];
-    char genre[50];
+struct Film{
+    string judul;
+    string genre;
     int harga;
-    char jam[20];
-
+    string jam;
     Film *next;
 };
 
-struct Riwayat {
-    char nama[100];
-    char film[100];
-
+struct Riwayat{
+    string nama;
+    string film;
     Riwayat *next;
     Riwayat *prev;
 };
 
-Film *headFilm = NULL;
-Film *tailFilm = NULL;
+Film *headFilm=NULL;
+Film *tailFilm=NULL;
 
-Riwayat *headRiwayat = NULL;
-Riwayat *tailRiwayat = NULL;
+Riwayat *headRiwayat=NULL;
+Riwayat *tailRiwayat=NULL;
 
-void loading() {
+void loading(){
+    cout<<"\nLoading";
 
-    cout << "\nLoading";
-
-    for(int i = 0; i < 5; i++) {
-        cout << ".";
+    for(int i=0;i<5;i++){
+        cout<<".";
         Sleep(300);
     }
 
-    cout << endl;
+    cout<<endl;
 }
 
-void header() {
-
-    cout << "\n";
-    cout << "============================================================\n";
-    cout << "                  BIOSKOP XXI INDONESIA                     \n";
-    cout << "============================================================\n";
-    cout << "            PESAN TIKET FILM FAVORITMU DISINI               \n";
-    cout << "============================================================\n";
+void header(){
+    cout<<"\n";
+    cout<<"============================================================\n";
+    cout<<"                  BIOSKOP XXI INDONESIA                     \n";
+    cout<<"============================================================\n";
+    cout<<"            PESAN TIKET FILM FAVORITMU DISINI               \n";
+    cout<<"============================================================\n";
 }
 
-void tambahFilm(const char *judul,
-                const char *genre,
+void tambahFilm(string judul,
+                string genre,
                 int harga,
-                const char *jam) {
+                string jam){
 
-    Film *baru = new Film;
+    Film *baru=new Film;
 
-    strcpy(baru->judul, judul);
-    strcpy(baru->genre, genre);
-    baru->harga = harga;	
-    strcpy(baru->jam, jam);
+    baru->judul=judul;
+    baru->genre=genre;
+    baru->harga=harga;
+    baru->jam=jam;
 
-    baru->next = NULL;
+    baru->next=NULL;
 
-    if(headFilm == NULL) {
-        headFilm = tailFilm = baru;
+    if(headFilm==NULL){
+        headFilm=tailFilm=baru;
     }
-    else {
-        tailFilm->next = baru;
-        tailFilm = baru;
+    else{
+        tailFilm->next=baru;
+        tailFilm=baru;
     }
 }
 
-void simpanFile() {
+void simpanFile(){
 
     FILE *fp;
 
-    fp = fopen("film.txt", "w");
+    fp=fopen("film.txt","w");
 
-    Film *current = headFilm;
+    Film *current=headFilm;
 
-    while(current != NULL) {
+    while(current!=NULL){
 
         fprintf(fp,
                 "%s#%s#%d#%s\n",
-                current->judul,
-                current->genre,
+                current->judul.c_str(),
+                current->genre.c_str(),
                 current->harga,
-                current->jam);
+                current->jam.c_str());
 
-        current = current->next;
+        current=current->next;
     }
 
     fclose(fp);
 
-    cout << "\nData Film Berhasil Disimpan Ke File!\n";
+    cout<<"\nData Film Berhasil Disimpan Ke File!\n";
 }
 
-void inputFilmBaru() {
-    char judul[100], genre[50], jam[6];
+void inputFilmBaru(){
+
+    string judul,genre,jam;
     int harga;
 
     cin.ignore();
-    cout << "Judul film    : "; cin.getline(judul, 100);
-    cout << "Genre         : "; cin.getline(genre, 50);
-    cout << "Harga (Rp)    : "; cin >> harga;
-    cin.ignore();
-    cout << "Jam tayang    : "; cin.getline(jam, 6);
 
-    tambahFilm(judul, genre, harga, jam);
-    cout << "\nFilm berhasil ditambahkan!\n";
+    cout<<"Judul film    : ";
+    getline(cin,judul);
+
+    cout<<"Genre         : ";
+    getline(cin,genre);
+
+    cout<<"Harga (Rp)    : ";
+    cin>>harga;
+    cin.ignore();
+
+    cout<<"Jam tayang    : ";
+    getline(cin,jam);
+
+    tambahFilm(judul,genre,harga,jam);
+
+    cout<<"\nFilm berhasil ditambahkan!\n";
 }
 
-void tampilFilm() {
+void tampilFilm(){
 
-    Film *current = headFilm;
-    int no = 1;
+    Film *current=headFilm;
+    int no=1;
 
-    cout << "\n====================================================================================\n";
-    cout << "| NO | JUDUL FILM                  | GENRE       | HARGA   | JAM TAYANG |\n";
-    cout << "====================================================================================\n";
+    cout<<"\n====================================================================================\n";
+    cout<<"| NO | JUDUL FILM                  | GENRE              | HARGA   | JAM TAYANG |\n";
+    cout<<"====================================================================================\n";
 
-    while(current != NULL) {
+    while(current!=NULL){
 
-        printf("| %-2d | %-28s | %-11s | %-7d | %-11s |\n",
-               no,
-               current->judul,
-               current->genre,
-               current->harga,
-               current->jam);
+        cout<<"| "
+            <<no<<" | "
+            <<current->judul<<" | "
+            <<current->genre<<" | "
+            <<current->harga<<" | "
+            <<current->jam<<endl;
 
-        current = current->next;
+        current=current->next;
         no++;
     }
 
-    cout << "====================================================================================\n";
+    cout<<"====================================================================================\n";
 }
 
-// Linear Search
-void searchingFilm() {
+void searchingFilm(){
 
-    char cari[100];
-    int ketemu = 0;
+    string cari;
+    int ketemu=0;
 
     cin.ignore();
 
-    cout << "\nMasukkan Judul Film : ";
-    cin.getline(cari, 100);
+    cout<<"\nMasukkan Judul Film : ";
+    getline(cin,cari);
 
-    Film *current = headFilm;
+    Film *current=headFilm;
 
-    while(current != NULL) {
+    while(current!=NULL){
 
-        if(stricmp(current->judul, cari) == 0) {
+        if(current->judul==cari){
 
-            cout << "\n========================================\n";
-            cout << "           FILM DITEMUKAN               \n";
-            cout << "========================================\n";
+            cout<<"\n========================================\n";
+            cout<<"           FILM DITEMUKAN               \n";
+            cout<<"========================================\n";
 
-            cout << "Judul : " << current->judul << endl;
-            cout << "Genre : " << current->genre << endl;
-            cout << "Harga : " << current->harga << endl;
-            cout << "Jam   : " << current->jam << endl;
+            cout<<"Judul : "<<current->judul<<endl;
+            cout<<"Genre : "<<current->genre<<endl;
+            cout<<"Harga : "<<current->harga<<endl;
+            cout<<"Jam   : "<<current->jam<<endl;
 
-            ketemu = 1;
+            ketemu=1;
         }
 
-        current = current->next;
+        current=current->next;
     }
 
-    if(ketemu == 0) {
-        cout << "\nFilm Tidak Ditemukan!\n";
+    if(ketemu==0){
+        cout<<"\nFilm Tidak Ditemukan!\n";
     }
 }
 
-void tukarFilm(Film *a, Film *b) {
-    swap(a->harga, b->harga);
+void tukarFilm(Film *a,Film *b){
 
-    char temp[100];
-
-    strcpy(temp, a->judul);
-    strcpy(a->judul, b->judul);
-    strcpy(b->judul, temp);
-
-    strcpy(temp, a->genre);
-    strcpy(a->genre, b->genre);
-    strcpy(b->genre, temp);
-
-    strcpy(temp, a->jam);
-    strcpy(a->jam, b->jam);
-    strcpy(b->jam, temp);
+    swap(a->judul,b->judul);
+    swap(a->genre,b->genre);
+    swap(a->harga,b->harga);
+    swap(a->jam,b->jam);
 }
 
-//bubble sort
-void sortingJam() {
-    if(headFilm == NULL) return;
+void sortingJam(){
+
+    if(headFilm==NULL) return;
 
     int tukar;
     Film *ptr;
-    Film *batas = NULL;
+    Film *batas=NULL;
 
-    do {
-        tukar = 0;
-        ptr = headFilm;
+    do{
+        tukar=0;
+        ptr=headFilm;
 
-        while(ptr->next != batas) {
-            if(strcmp(ptr->jam, ptr->next->jam) > 0) {
-                tukarFilm(ptr, ptr->next);
-                tukar = 1;
+        while(ptr->next!=batas){
+
+            if(ptr->jam>ptr->next->jam){
+
+                tukarFilm(ptr,ptr->next);
+                tukar=1;
             }
 
-            ptr = ptr->next;
+            ptr=ptr->next;
         }
 
-        batas = ptr;
+        batas=ptr;
 
-    } while(tukar);
+    }while(tukar);
 
-    cout << "\nFilm Berhasil Diurutkan Berdasarkan Jam Tayang!\n";
+    cout<<"\nFilm Berhasil Diurutkan Berdasarkan Jam Tayang!\n";
 }
 
-void tambahRiwayat(const char *nama,
-                   const char *film) {
+void tambahRiwayat(string nama,
+                   string film){
 
-    Riwayat *baru = new Riwayat;
+    Riwayat *baru=new Riwayat;
 
-    strcpy(baru->nama, nama);
-    strcpy(baru->film, film);
+    baru->nama=nama;
+    baru->film=film;
 
-    baru->next = NULL;
-    baru->prev = NULL;
+    baru->next=NULL;
+    baru->prev=NULL;
 
-    if(headRiwayat == NULL) {
-        headRiwayat = tailRiwayat = baru;
+    if(headRiwayat==NULL){
+        headRiwayat=tailRiwayat=baru;
     }
-    else {
-
-        tailRiwayat->next = baru;
-        baru->prev = tailRiwayat;
-        tailRiwayat = baru;
+    else{
+        tailRiwayat->next=baru;
+        baru->prev=tailRiwayat;
+        tailRiwayat=baru;
     }
 }
 
-void pesanTiket() {
+void pesanTiket(){
 
-    char nama[100];
-    char film[100];
+    string nama;
+    string film;
 
     tampilFilm();
 
     cin.ignore();
 
-    cout << "\nMasukkan Nama Pemesan : ";
-    cin.getline(nama, 100);
+    cout<<"\nMasukkan Nama Pemesan : ";
+    getline(cin,nama);
 
-    cout << "Masukkan Judul Film   : ";
-    cin.getline(film, 100);
+    cout<<"Masukkan Judul Film   : ";
+    getline(cin,film);
 
-    tambahRiwayat(nama, film);
+    tambahRiwayat(nama,film);
 
     loading();
 
-    cout << "\n";
-    cout << "========================================\n";
-    cout << "             TIKET BIOSKOP              \n";
-    cout << "========================================\n";
-    cout << "Nama Pemesan : " << nama << endl;
-    cout << "Film         : " << film << endl;
-    cout << "Status       : BERHASIL\n";
-    cout << "========================================\n";
+    cout<<"\n";
+    cout<<"========================================\n";
+    cout<<"             TIKET BIOSKOP              \n";
+    cout<<"========================================\n";
+    cout<<"Nama Pemesan : "<<nama<<endl;
+    cout<<"Film         : "<<film<<endl;
+    cout<<"Status       : BERHASIL\n";
+    cout<<"========================================\n";
 }
 
-void tampilRiwayat() {
+void tampilRiwayat(){
 
-    Riwayat *current = headRiwayat;
-    int no = 1;
+    Riwayat *current=headRiwayat;
+    int no=1;
 
-    cout << "\n====================================================\n";
-    cout << "              RIWAYAT PEMESANAN                     \n";
-    cout << "====================================================\n";
+    cout<<"\n====================================================\n";
+    cout<<"              RIWAYAT PEMESANAN                     \n";
+    cout<<"====================================================\n";
 
-    while(current != NULL) {
+    while(current!=NULL){
 
-        cout << "\nRiwayat " << no << endl;
-        cout << "Nama : " << current->nama << endl;
-        cout << "Film : " << current->film << endl;
+        cout<<"\nRiwayat "<<no<<endl;
+        cout<<"Nama : "<<current->nama<<endl;
+        cout<<"Film : "<<current->film<<endl;
 
-        current = current->next;
+        current=current->next;
         no++;
     }
 }
 
-int loadDataFilm() {
-    FILE *fp = fopen("film.txt", "r");
+int loadDataFilm(){
 
-    if(fp == NULL) {
+    FILE *fp=fopen("film.txt","r");
+
+    if(fp==NULL){
         return 0;
     }
 
-    char judul[100], genre[50], jam[20];
+    char judul[100],genre[50],jam[20];
     int harga;
-    int jumlah = 0;
+    int jumlah=0;
 
-    while(fscanf(fp, " %99[^#]#%49[^#]#%d#%19[^\n]\n",
-                 judul, genre, &harga, jam) != EOF) {
+    while(fscanf(fp,
+                 " %99[^#]#%49[^#]#%d#%19[^\n]\n",
+                 judul,
+                 genre,
+                 &harga,
+                 jam)!=EOF){
 
-        tambahFilm(judul, genre, harga, jam);
+        tambahFilm(judul,genre,harga,jam);
         jumlah++;
     }
 
     fclose(fp);
+
     return jumlah;
 }
 
-
-int main() {
+int main(){
 
     int pilih;
 
-    system("color 0B");
-    //ini buat nambahin doang kalo diapus gpp
-    tambahFilm("Spider-Man Brand New Day", "Action", 60000, "20.00");
-    tambahFilm("Danur The Last Chapter", "Horror", 45000, "21.00");
-    tambahFilm("The Odyssey", "Adventure", 55000, "18.30");
-    tambahFilm("Backrooms", "Horror", 50000, "19.00");
-    tambahFilm("Crocodile Tears", "Drama", 40000, "17.00");
+    tambahFilm("Spider-Man Brand New Day","Action",60000,"20.00");
+    tambahFilm("Danur The Last Chapter","Horor",45000,"21.00");
+    tambahFilm("The Odyssey","Horor Komedi",55000,"18.30");
+    tambahFilm("Tumbal Proyek","Horor",50000,"19.00");
+    tambahFilm("Ayah Ini Arahnya Kemana","Drama Keluarga",40000,"17.00");
+
     loadDataFilm();
 
-    do {
+    do{
 
         header();
 
-        cout << "\n";
-        cout << "1. Tampilkan Daftar Film\n";
-        cout << "2. Input Film Baru\n";
-        cout << "3. Cari Film (Linear Search)\n";
-        cout << "4. Urutan Jam Film (Bubble Sort)\n";
-        cout << "5. Pesan Tiket\n";
-        cout << "6. Tampilkan Riwayat\n";
-        cout << "7. Simpan Data Ke File\n";
-        cout << "0. Keluar\n";
-        cout << "---------------------------------------------------------------\n";
-        cout << "\nPilih Menu : ";
-        cin >> pilih;
+        cout<<"\n";
+        cout<<"1. Tampilkan Daftar Film\n";
+        cout<<"2. Input Film Baru\n";
+        cout<<"3. Cari Film (Linear Search)\n";
+        cout<<"4. Urutan Jam Film (Bubble Sort)\n";
+        cout<<"5. Pesan Tiket\n";
+        cout<<"6. Tampilkan Riwayat\n";
+        cout<<"7. Simpan Data Ke File\n";
+        cout<<"0. Keluar\n";
 
-        switch(pilih) {
+        cout<<"---------------------------------------------------------------\n";
+
+        cout<<"\nPilih Menu : ";
+        cin>>pilih;
+
+        switch(pilih){
 
             case 1:
                 tampilFilm();
                 break;
-			
-			case 2:
-				inputFilmBaru();
-				break;
-				
+
+            case 2:
+                inputFilmBaru();
+                break;
+
             case 3:
                 searchingFilm();
                 break;
@@ -377,21 +379,21 @@ int main() {
                 break;
 
             case 0:
-                cout << "\n========================================\n";
-                cout << "        TERIMA KASIH TELAH DATANG       \n";
-                cout << "========================================\n";
+                cout<<"\n========================================\n";
+                cout<<"        TERIMA KASIH TELAH DATANG       \n";
+                cout<<"========================================\n";
                 break;
 
             default:
-                cout << "\nMenu Tidak Tersedia!\n";
+                cout<<"\nMenu Tidak Tersedia!\n";
         }
 
-        cout << endl;
+        cout<<endl;
+
         system("pause");
         system("cls");
 
-    } while(pilih != 0);
+    }while(pilih!=0);
 
-    
     return 0;
 }
